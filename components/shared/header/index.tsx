@@ -39,7 +39,7 @@ export default async function Header() {
           {/* all menu button */}
           <Button
             variant='ghost'
-            className='header-button flex items-center gap-1 text-base [&_svg]:size-6'
+            className='dark header-button flex items-center gap-1 text-base [&_svg]:size-6'
           >
             <MenuIcon />
             All
