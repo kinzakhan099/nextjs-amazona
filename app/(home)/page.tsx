@@ -9,6 +9,7 @@ import data from '@/lib/data'
 import { toSlug } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import ProductSlider from '@/components/shared/product/product-slider'
+import BrowsingHistoryList from '@/components/shared/browsing-history-list'
 
 // This is the main landing page of the application
 export default async function Page() {
@@ -98,6 +99,9 @@ export default async function Page() {
             />
           </CardContent>
         </Card>
+      </div>
+      <div className='p-4 bg-background'>
+        <BrowsingHistoryList />
       </div>
     </>
   )
