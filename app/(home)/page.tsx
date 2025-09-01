@@ -8,7 +8,7 @@ import {
 import data from '@/lib/data'
 import { toSlug } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
-import ProductSlider from '@/components/shared/product/product.slider'
+import ProductSlider from '@/components/shared/product/product-slider'
 
 // This is the main landing page of the application
 export default async function Page() {
