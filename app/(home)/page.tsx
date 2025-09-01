@@ -23,6 +23,7 @@ export default async function Page() {
     tag: 'featured',
     limit: 4,
   })
+  // fetch best-selling products for a specific section
   const bestSellers = await getProductsForCard({
     tag: 'best-seller',
     limit: 4,
@@ -30,6 +31,11 @@ export default async function Page() {
   // fetch today's deals products
   const todaysDeals = await getProductsByTag({
     tag: 'todays-deal',
+    limit: 8,
+  })
+  // fetch best-selling products
+  const bestSellingProducts = await getProductsByTag({
+    tag: 'best-seller',
     limit: 8,
   })
   // prepare cards data
@@ -80,6 +86,16 @@ export default async function Page() {
         <Card className='w-full rounded-none'>
           <CardContent className='p-4 items-center gap-3'>
             <ProductSlider title={"Today's Deal"} products={todaysDeals} />
+          </CardContent>
+        </Card>
+
+        <Card className='w-full rounded-none'>
+          <CardContent className='p-4 items-center gap-3'>
+            <ProductSlider
+              title='Best Selling Products'
+              products={bestSellingProducts}
+              hideDetails
+            />
           </CardContent>
         </Card>
       </div>
