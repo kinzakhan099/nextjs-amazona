@@ -17,8 +17,9 @@ const initialState: Cart = {
 // Define the store
 interface CartState {
   cart: Cart
-  addItem: (item: OrderItem, quantity: number) => Promise<string | undefined>
-  init: () => void
+  addItem: (item: OrderItem, quantity: number) => Promise<string>
+  updateItem: (item: OrderItem, quantity: number) => Promise<void>
+  removeItem: (item: OrderItem) => void
 }
 
 const useCartStore = create(
@@ -34,18 +35,17 @@ const useCartStore = create(
             x.color === item.color &&
             x.size === item.size
         )
-        // check if item is in stock
+
         if (existItem) {
           if (existItem.countInStock < quantity + existItem.quantity) {
             throw new Error('Not enough items in stock')
           }
         } else {
-          // compare incoming quantity (not item.quantity)
-          if (item.countInStock < quantity) {
+          if (item.countInStock < item.quantity) {
             throw new Error('Not enough items in stock')
           }
         }
-        // check if item is already in cart
+
         const updatedCartItems = existItem
           ? items.map((x) =>
               x.product === item.product &&
@@ -53,9 +53,9 @@ const useCartStore = create(
               x.size === item.size
                 ? { ...existItem, quantity: existItem.quantity + quantity }
                 : x
-            ) // update quantity
+            )
           : [...items, { ...item, quantity }]
-        // update cart
+
         set({
           cart: {
             ...get().cart,
@@ -65,14 +65,64 @@ const useCartStore = create(
             })),
           },
         })
-
-        return updatedCartItems.find(
+        const foundItem = updatedCartItems.find(
           (x) =>
             x.product === item.product &&
             x.color === item.color &&
             x.size === item.size
-        )?.clientId // return clientid
+        )
+        if (!foundItem) {
+          throw new Error('Item not found in cart')
+        }
+        return foundItem.clientId
       },
+
+      updateItem: async (item: OrderItem, quantity: number) => {
+        const { items } = get().cart
+        const exist = items.find(
+          (x) =>
+            x.product === item.product &&
+            x.color === item.color &&
+            x.size === item.size
+        )
+        if (!exist) return
+        const updatedCartItems = items.map((x) =>
+          x.product === item.product &&
+          x.color === item.color &&
+          x.size === item.size
+            ? { ...exist, quantity: quantity }
+            : x
+        )
+        set({
+          cart: {
+            ...get().cart,
+            items: updatedCartItems,
+            ...(await calcDeliveryDateAndPrice({
+              items: updatedCartItems,
+            })),
+          },
+        })
+      },
+
+      removeItem: async (item: OrderItem) => {
+        const { items } = get().cart
+        const updatedCartItems = items.filter(
+          (x) =>
+            x.product !== item.product ||
+            x.color !== item.color ||
+            x.size !== item.size
+        )
+        set({
+          cart: {
+            ...get().cart,
+            items: updatedCartItems,
+            ...(await calcDeliveryDateAndPrice({
+              items: updatedCartItems,
+            })),
+          },
+        })
+      },
+
       init: () => set({ cart: initialState }),
     }),
     {
