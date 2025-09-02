@@ -34,3 +34,15 @@ const NUMBER_FORMATTER = new Intl.NumberFormat('en-US')
 export function formatNumber(number: number) {
   return NUMBER_FORMATTER.format(number)
 }
+
+// round to 2 decimal places
+export const round2 = (num: number) => {
+  return Math.round((num + Number.EPSILON) * 100) / 100
+}
+
+// generate random 24 character hex string
+export const generateId = () => {
+  return Array.from({ length: 24 }, () => Math.floor(Math.random() * 10)).join(
+    ''
+  ) //Math.random().toString(16).slice(2, 26)
+}
